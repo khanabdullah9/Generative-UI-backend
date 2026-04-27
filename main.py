@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 
-from models import save_data_model, user_model
+from models.models import save_data_model
 from database.crud import CRUD
 from utils import log_info
 from database import project
+from routers import users
 
 app = FastAPI()
+app.include_router(users.router)
 
 @app.get("/")
 def root():
@@ -28,13 +30,3 @@ def save_data(data: save_data_model) -> bool:
             crud_obj.replace(data.form_data)
 
     return True
-
-@app.post("/api/user/create_user/")
-def create_user(user: user_model):
-    result = project.add_user(user_name = user.user_name, email = user.email)
-    return result
-    
-@app.post("/api/user/replace_user/")
-def replace_user(user: user_model):
-    return project.replace_user(id = user.id, user_name = user.user_name,
-                                    email = user.email, password = user.password)
