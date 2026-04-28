@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 
 from models.models import save_data_model
-from database.crud import CRUD
+from database.nosql.crud import CRUD
 from utils import log_info
-from database import project
+from database.nosql import project
 from routers import users
 
 app = FastAPI()

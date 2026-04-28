@@ -1,3 +1,5 @@
 fastapi[standard]
 requests
 pymongo
+SQLAlchemy
+psycopg2

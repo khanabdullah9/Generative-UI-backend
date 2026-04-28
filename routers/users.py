@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter
 
-from database import project
+from database.nosql import project
 from models.models import user_model
 
 router = APIRouter(
