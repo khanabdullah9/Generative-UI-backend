@@ -54,7 +54,6 @@ class UserMasterCrud(DBEngine):
                 return session.execute(statement).scalars().all()
         except Exception as err:
             log_error(str(err))
-            return False
 
         return []
     
@@ -69,8 +68,8 @@ class UserMasterCrud(DBEngine):
                             user.LastName = last_name
                         if email:
                             user.Email = email
-                        if is_active:
-                            user.IsActive = is_active
+                        if is_active == 0:
+                            user.IsActive = 0
                         session.commit()
                         return True
             except Exception as err:
@@ -79,4 +78,248 @@ class UserMasterCrud(DBEngine):
             return False
 
     def delete(self, id):
-        self.update(id = id, is_active = 0) # simply set the user inactive
+        return self.update(id = id, is_active = 0) # simply set the user inactive
+
+class ProjectMasterCrud(DBEngine):
+    def __init__(self):
+        super().__init__()
+
+    def create(self, manager_id, name, description):
+        try:
+            with Session(self.engine) as session:
+                new_project = ProjectMaster()
+                new_project.ManagerID = manager_id
+                new_project.Name = name
+                new_project.Description = description
+                session.add(new_project)
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+
+    def read(self, project_id = 0):
+        statement = select(ProjectMaster)
+        if project_id > 0:
+            statement = select(ProjectMaster).where(ProjectMaster.ProjectID == project_id)
+
+        try:
+            with Session(self.engine) as session:
+                return session.execute(statement).scalars().all()
+        except Exception as err:
+            log_error(str(err))
+            return []
+
+    def update(self, project_id: int, manager_id: int = 0, name: str = "", description: str = "", is_active: int = 1):
+        try:
+            with Session(self.engine) as session:
+                project = session.get(ProjectMaster, project_id)
+                if not project:
+                    return False
+
+                if manager_id:
+                    project.ManagerID = manager_id
+                if name:
+                    project.Name = name
+                if description:
+                    project.Description = description
+                if is_active == 0:
+                    project.IsActive = 0
+
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def delete(self, project_id):
+        return self.update(project_id = project_id, is_active = 0)
+
+class ProjectUserCrud(DBEngine):
+    def __init__(self):
+        super().__init__()
+
+    def create(self, project_id, user_id):
+        try:
+            with Session(self.engine) as session:
+                new_project_user = ProjectUsers()
+                new_project_user.ProjectID = project_id
+                new_project_user.UserID = user_id
+                session.add(new_project_user)
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def read(self, project_user_id:int):
+        statement = select(ProjectUsers)
+        if project_user_id > 0:
+            statement = select(ProjectUsers).where(ProjectUsers.ProjUserID == project_user_id)
+
+        try:
+            with Session(self.engine) as session:
+                return session.execute(statement).scalars().all()
+        except Exception as err:
+            log_error(str(err))
+        return []
+
+    def update(self, project_user_id:int, project_id: int = None, user_id: int = None, is_active: int = 1):
+        try:
+            with Session(self.engine) as session:
+                project_user = session.get(ProjectUsers, project_user_id)
+                if not project_user:
+                    return False
+
+                if project_id:
+                    project_user.ProjectID = project_id
+                if user_id:
+                    project_user.UserID = user_id
+                if is_active == 0:
+                    project_user.IsActive = 0
+
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def delete(self, project_user_id:int):
+        return self.update(project_user_id = project_user_id, is_active = 0)
+
+class ProjectDetailsCrud(DBEngine):
+    def __init__(self):
+        super().__init__()
+
+    def create(self, project_id: int, page_id: int):
+        try:
+            with Session(self.engine) as session:
+                new_project = ProjectDetails()
+                new_project.ProjectID = project_id
+                new_project.PageID = page_id
+                session.add(new_project)
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def read(self, detail_id:int):
+        statement = select(ProjectDetails)
+        if detail_id > 0:
+            statement = select(ProjectDetails).where(ProjectDetails.DetailID == detail_id)
+
+        try:
+            with Session(self.engine) as session:
+                return session.execute(statement).scalars().all()
+        except Exception as err:
+            log_error(str(err))
+        return []
+
+    def update(self, detail_id: int, project_id: int = None, page_id: int = None, is_active: int = 1):
+        try:
+            with Session(self.engine) as session:
+                project_details = session.get(ProjectDetails, detail_id)
+                if not project_details:
+                    return False
+
+                if project_id:
+                    project_details.DetailID = project_id
+                if page_id:
+                    project_details.PageID = page_id
+                if is_active == 0:
+                    project_details.IsActive = 0
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def delete(self, detail_id: int):
+        return self.update(detail_id = detail_id, is_active = 0)
+
+class PageLayoutCrud(DBEngine):
+    def __init__(self):
+        super().__init__()
+
+    def create(self, layout: dict):
+        try:
+            with Session(self.engine) as session:
+                new_page_layout = PageLayout()
+                new_page_layout.Layout = layout
+                session.add(new_page_layout)
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def read(self, page_id:int = 0):
+        statement = select(PageLayout)
+        if page_id > 0:
+            statement = select(PageLayout).where(PageLayout.PageID == page_id)
+        with Session(self.engine) as session:
+            return session.execute(statement).scalars().all()
+
+    def update(self, page_id: int, layout: dict = None, is_active: int = 1):
+        try:
+            with Session(self.engine) as session:
+                page_layout = session.get(PageLayout, page_id)
+                if not page_layout:
+                    return False
+
+                if layout:
+                    page_layout.Layout = layout
+                if is_active == 0:
+                    page_layout.IsActive = 0
+
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def delete(self, page_id: int):
+        return self.update(page_id = page_id, is_active = 0)
+
+class PageData(DBEngine):
+    def __init__(self):
+        super().__init__()
+
+    def create(self, proj_detail_id: int, page_data: dict):
+        try:
+            with Session(self.engine) as session:
+                new_page_data = PageData()
+                new_page_data.ProjDetailID = proj_detail_id
+                new_page_data.Data = page_data
+                session.add(new_page_data)
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def read(self, page_data_id: int = 0):
+        statement = select(PageData)
+        if page_data_id > 0:
+            statement = select(PageData).where(PageData.PageDataID == page_data_id)
+        with Session(self.engine) as session:
+            return session.execute(statement).scalars().all()
+
+    def update(self, page_data_id: int, page_data: dict = None, is_active: int = 1):
+        try:
+            with Session(self.engine) as session:
+                page_data = session.get(PageData, page_data_id)
+                if not page_data:
+                    return False
+
+                if page_data:
+                    page_data.Data = page_data
+                if is_active == 0:
+                    page_data.IsActive = 0
+
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def delete(self, page_data_id: int):
+        return self.update(page_data_id = page_data_id, is_active = 0)
