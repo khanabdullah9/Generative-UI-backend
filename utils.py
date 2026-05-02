@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime
+import json
 
 # 1. Setup the Root Logger to a high level (to silence the server/libraries)
 logging.basicConfig(level=logging.WARNING) 
@@ -25,3 +26,15 @@ def log_info(info_msg: str):
 
 def generate_random_id():
     return datetime.now().strftime("%d%m%Y%H%M%S")
+
+def get_database_config():
+    if not os.path.exists("app_config.json"):
+        return {}
+
+    with open("app_config.json","r") as r:
+        data = json.load(r)
+
+    if "database" in data:
+        return data["database"]
+
+    return {}

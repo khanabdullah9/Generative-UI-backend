@@ -8,7 +8,8 @@ class save_data_model(BaseModel):
     mode: int # 1: create,2: read,3: update,4: delete
 
 class user_model(BaseModel):
-    id: str | None = ""
-    user_name: str
+    user_id: int | None = 0
+    first_name: str
+    last_name: str
     email: str
     password: str | None = ""

@@ -13,6 +13,7 @@ class UserMaster(BaseClass):
     FirstName: Mapped[str]
     LastName: Mapped[str]
     Email: Mapped[str]
+    Password: Mapped[str]
     CreatedDate: Mapped[datetime] = mapped_column(default=datetime.utcnow())
     ModifiedDate: Mapped[datetime] = mapped_column(insert_default=datetime.utcnow(), onupdate=datetime.utcnow())
     IsActive: Mapped[int] = mapped_column(default=1) 
