@@ -168,6 +168,7 @@ class ProjectUserCrud(DBEngine):
             with Session(self.engine) as session:
                 project_user = session.get(ProjectUsers, project_user_id)
                 if not project_user:
+                    print(f"Could not find user for id={project_user_id}")
                     return False
 
                 if project_id:

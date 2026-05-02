@@ -30,9 +30,9 @@ class ProjectDetailModel(BaseModel):
     is_active: int = 1
 
 class ProjectUserModel(BaseModel):
-    proj_user_id: int
-    project_id: int
-    user_id: int
+    proj_user_id: int = 0
+    project_id: int = 0
+    user_id: int = 0
     is_active: int  = 1
 
 class PageLayoutModel(BaseModel):
