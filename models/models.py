@@ -36,7 +36,7 @@ class ProjectUserModel(BaseModel):
     is_active: int  = 1
 
 class PageLayoutModel(BaseModel):
-    page_id: int
+    page_id: int = 0
     layout: dict
     is_active: int  = 1
 

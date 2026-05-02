@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter, status, HTTPException
 
-from models.models import ProjectMasterModel, ProjectUserModel, ProjectDetailModel
-from database.relational.crud import ProjectMasterCrud, ProjectUserCrud
+from models.models import ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel
+from database.relational.crud import ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, PageLayoutCrud
 from utils import log_info
 
 router = APIRouter(prefix="/api/project")
@@ -53,3 +53,21 @@ def delete_project_user(project: ProjectUserModel):
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project user deletion failed")
     return {"message": "Project user deletion successful"}
+
+# PROJECT LAYOUT
+@router.post("/save_page_layout/", status_code=status.HTTP_201_CREATED)
+def save_page_layout(project: PageLayoutModel):
+    obj = PageLayoutCrud()
+    success = obj.create(layout = project.layout)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project layout creation failed")
+    return {"message": "Project layout saved successful"}
+
+@router.post("/replace_page_layout/", status_code=status.HTTP_200_OK)
+def replace_page_layout(project: PageLayoutModel):
+    obj = PageLayoutCrud()
+    log_info(str(project.page_id))
+    success = obj.update(page_id = project.page_id, layout = project.layout)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project layout creation failed")
+    return {"message": "Project layout saved successful"}
