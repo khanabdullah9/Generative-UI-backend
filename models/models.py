@@ -44,3 +44,8 @@ class PageDataModel(BaseModel):
     proj_detail_id: int
     data: dict
     is_active: int = 1
+
+class ListProjectModel(BaseModel):
+    project_id: int
+    manager_id: int
+    name: str
