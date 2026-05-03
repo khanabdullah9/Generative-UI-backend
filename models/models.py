@@ -23,10 +23,9 @@ class ProjectMasterModel(BaseModel):
     is_active: int = 1
 
 class ProjectDetailModel(BaseModel):
-    detail_id: int
+    detail_id: int = 0
     project_id: int
-    name: str
-    description: str
+    page_id: int    
     is_active: int = 1
 
 class ProjectUserModel(BaseModel):

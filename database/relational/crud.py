@@ -224,11 +224,14 @@ class ProjectDetailsCrud(DBEngine):
                     return False
 
                 if project_id:
-                    project_details.DetailID = project_id
+                    project_details.ProjectID = project_id
                 if page_id:
                     project_details.PageID = page_id
                 if is_active == 0:
                     project_details.IsActive = 0
+
+                session.commit()
+                return True
         except Exception as err:
             log_error(str(err))
             return False

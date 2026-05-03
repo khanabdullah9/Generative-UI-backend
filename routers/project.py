@@ -66,8 +66,34 @@ def save_page_layout(project: PageLayoutModel):
 @router.post("/replace_page_layout/", status_code=status.HTTP_200_OK)
 def replace_page_layout(project: PageLayoutModel):
     obj = PageLayoutCrud()
-    log_info(str(project.page_id))
     success = obj.update(page_id = project.page_id, layout = project.layout)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project layout creation failed")
     return {"message": "Project layout saved successful"}
+
+#PROJECT DETAILS
+@router.post("/create_project_detail/", status_code=status.HTTP_201_CREATED)
+def create_project_detail(project: ProjectDetailModel):
+    obj = ProjectDetailsCrud()
+    success = obj.create(project.project_id, project.page_id)
+
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project detail creation failed")
+    return {"message": "Project detail creation successful"}
+
+@router.post("/update_project_detail/", status_code=status.HTTP_200_OK)
+def update_project_detail(project: ProjectDetailModel):
+    obj = ProjectDetailsCrud()
+    success = obj.update(project.detail_id,project.project_id, project.page_id, project.is_active)
+
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project detail updation failed")
+    return {"message": "Project detail updation successful"}
+
+@router.post("/delete_project_detail/", status_code=status.HTTP_200_OK)
+def delete_project_detail(project: ProjectDetailModel):
+    obj = ProjectDetailsCrud()
+    success = obj.delete(project.detail_id)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project detail deletion failed")
+    return {"message": "Project detail deletion successful"}
