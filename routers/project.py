@@ -25,10 +25,10 @@ def get_all_projects(user_id: int):
 @router.post("/create_project/", status_code=status.HTTP_201_CREATED)
 def create_project(project: ProjectMasterModel):
     obj = ProjectMasterCrud()
-    success = obj.create(project.manager_id, project.name, project.description)
+    success, inserted_id = obj.create(project.manager_id, project.name, project.description)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project creation failed")
-    return {"message": "Project creation successful"}
+    return {"message": "Project creation successful","project_id": inserted_id}
 
 @router.post("/create_project_only/", status_code=status.HTTP_201_CREATED)
 def create_project_only(project: ProjectMasterModel):

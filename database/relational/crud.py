@@ -93,9 +93,10 @@ class ProjectMasterCrud(DBEngine):
                 new_project.Description = description
                 session.add(new_project)
                 session.commit()
-                return True
+                return True, new_project.ProjectID
         except Exception as err:
             log_error(str(err))
+            return False,0
 
     def read(self, project_id = 0):
         statement = select(ProjectMaster)
