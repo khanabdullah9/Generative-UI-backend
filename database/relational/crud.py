@@ -283,7 +283,7 @@ class PageLayoutCrud(DBEngine):
     def delete(self, page_id: int):
         return self.update(page_id = page_id, is_active = 0)
 
-class PageData(DBEngine):
+class PageDataCrud(DBEngine):
     def __init__(self):
         super().__init__()
 
@@ -307,17 +307,17 @@ class PageData(DBEngine):
         with Session(self.engine) as session:
             return session.execute(statement).scalars().all()
 
-    def update(self, page_data_id: int, page_data: dict = None, is_active: int = 1):
+    def update(self, page_data_id: int, page_data: dict, is_active: int = 1):
         try:
             with Session(self.engine) as session:
-                page_data = session.get(PageData, page_data_id)
-                if not page_data:
+                page_data_obj = session.get(PageData, page_data_id)
+                if not page_data_obj:
                     return False
 
                 if page_data:
-                    page_data.Data = page_data
+                    page_data_obj.Data = page_data
                 if is_active == 0:
-                    page_data.IsActive = 0
+                    page_data_obj.IsActive = 0
 
                 session.commit()
                 return True
@@ -326,4 +326,4 @@ class PageData(DBEngine):
             return False
 
     def delete(self, page_data_id: int):
-        return self.update(page_data_id = page_data_id, is_active = 0)
+        return self.update(page_data_id = page_data_id, page_data = {}, is_active = 0)

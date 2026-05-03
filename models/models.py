@@ -40,7 +40,7 @@ class PageLayoutModel(BaseModel):
     is_active: int  = 1
 
 class PageDataModel(BaseModel):
-    page_data_id: int
+    page_data_id: int = 0
     proj_detail_id: int
     data: dict
     is_active: int = 1

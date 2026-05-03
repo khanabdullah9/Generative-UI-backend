@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter, status, HTTPException
 
-from models.models import ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel
-from database.relational.crud import ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, PageLayoutCrud
+from models.models import ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, PageDataModel
+from database.relational.crud import ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, PageLayoutCrud, PageDataCrud
 from utils import log_info
 
 router = APIRouter(prefix="/api/project")
@@ -97,3 +97,30 @@ def delete_project_detail(project: ProjectDetailModel):
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project detail deletion failed")
     return {"message": "Project detail deletion successful"}
+
+# PAGE DATA
+@router.post("/save_page_data/", status_code=status.HTTP_201_CREATED)
+def save_page_data(project: PageDataModel):
+    obj = PageDataCrud()
+    success = obj.create(project.proj_detail_id, project.data)
+
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Page data save failed")
+    return {"message": "Page data saved successful"}
+
+@router.post("/replace_page_data/", status_code=status.HTTP_201_CREATED)
+def replace_page_data(project: PageDataModel):
+    obj = PageDataCrud()
+    success = obj.update(project.page_data_id, project.data)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Page data replace failed")
+    return {"message": "Page data replace successful"}
+
+@router.post("/delete_page_data/", status_code=status.HTTP_200_OK)
+def delete_page_data(project: PageDataModel):
+    obj = PageDataCrud()
+    success = obj.delete(project.page_data_id)
+
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Page data deletion failed")
+    return {"message": "Page data deletion successful"}
