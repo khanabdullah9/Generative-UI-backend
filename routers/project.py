@@ -92,9 +92,9 @@ def replace_page_layout(project: PageLayoutModel):
 
 #PROJECT DETAILS
 @router.get("/get_project_details/", status_code = status.HTTP_200_OK)
-def get_project_details(project: ProjectDetailModel):
+def get_project_details(detail_id:int, project_id: int):
     obj = ProjectDetailsCrud()
-    result = obj.read(project.detail_id, project.project_id)
+    result = obj.read(detail_id, project_id)
 
     if not result:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = "No match for requested detail id")
@@ -102,7 +102,7 @@ def get_project_details(project: ProjectDetailModel):
     return result
 
 @router.get("/get_project_pages/", status_code = status.HTTP_200_OK, response_model = list[ListProjectPagesModel])
-def get_project_pages(project: ProjectDetailModel):
+def get_project_pages(project_id: int):
     """Get Project Pages list
 
     Args:
@@ -114,7 +114,7 @@ def get_project_pages(project: ProjectDetailModel):
     Returns:
         list[ListProjectPagesModel]: Pydantic rep.. of project pages
     """
-    results = joins.get_project_pages(project.project_id)
+    results = joins.get_project_pages(project_id)
 
     keys = ["page_id","page_name"]
     return [dict(zip(keys, row)) for row in results]

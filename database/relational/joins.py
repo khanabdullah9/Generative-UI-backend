@@ -26,6 +26,7 @@ def get_all_projects(user_id):
                     ProjectMaster.ManagerID,
                     ProjectMaster.Name
                 )
+                .distinct()
                 .outerjoin(ProjectUsers)
                 .where(
                     or_(ProjectMaster.ManagerID == user_id, ProjectUsers.UserID == user_id),
