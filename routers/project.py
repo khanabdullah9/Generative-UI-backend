@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter, status, HTTPException
 import json
 
-from models.models import ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, PageDataModel, ListProjectModel
+from models.models import ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, PageDataModel, ListProjectModel, ListProjectPagesModel
 from database.relational.crud import ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, PageLayoutCrud, PageDataCrud
 from database.relational import joins
 from utils import log_info
@@ -77,7 +77,7 @@ def delete_project_user(project: ProjectUserModel):
 @router.post("/save_page_layout/", status_code=status.HTTP_201_CREATED)
 def save_page_layout(project: PageLayoutModel):
     obj = PageLayoutCrud()
-    success = obj.create(layout = project.layout)
+    success = obj.create(page_name = project.page_name, layout = project.layout)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project layout creation failed")
     return {"message": "Project layout saved successful"}
@@ -85,12 +85,40 @@ def save_page_layout(project: PageLayoutModel):
 @router.post("/replace_page_layout/", status_code=status.HTTP_200_OK)
 def replace_page_layout(project: PageLayoutModel):
     obj = PageLayoutCrud()
-    success = obj.update(page_id = project.page_id, layout = project.layout)
+    success = obj.update(page_id = project.page_id, page_name = project.page_name, layout = project.layout)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project layout creation failed")
     return {"message": "Project layout saved successful"}
 
 #PROJECT DETAILS
+@router.get("/get_project_details/", status_code = status.HTTP_200_OK)
+def get_project_details(project: ProjectDetailModel):
+    obj = ProjectDetailsCrud()
+    result = obj.read(project.detail_id, project.project_id)
+
+    if not result:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail = "No match for requested detail id")
+
+    return result
+
+@router.get("/get_project_pages/", status_code = status.HTTP_200_OK, response_model = list[ListProjectPagesModel])
+def get_project_pages(project: ProjectDetailModel):
+    """Get Project Pages list
+
+    Args:
+        project (ProjectDetailModel): Pydantic input data
+
+    Raises:
+        HTTPException: if no match for the data
+
+    Returns:
+        list[ListProjectPagesModel]: Pydantic rep.. of project pages
+    """
+    results = joins.get_project_pages(project.project_id)
+
+    keys = ["page_id","page_name"]
+    return [dict(zip(keys, row)) for row in results]
+
 @router.post("/create_project_detail/", status_code=status.HTTP_201_CREATED)
 def create_project_detail(project: ProjectDetailModel):
     obj = ProjectDetailsCrud()

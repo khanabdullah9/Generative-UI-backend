@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, and_
 from sqlalchemy.orm import Session
 import urllib.parse
 from utils import get_database_config, log_error, log_info
@@ -205,10 +205,16 @@ class ProjectDetailsCrud(DBEngine):
             log_error(str(err))
             return False
 
-    def read(self, detail_id:int):
+    def read(self, detail_id:int = 0, project_id: int = 0):
         statement = select(ProjectDetails)
         if detail_id > 0:
-            statement = select(ProjectDetails).where(ProjectDetails.DetailID == detail_id)
+            statement = select(ProjectDetails).where(
+                and_(ProjectDetails.DetailID == detail_id, ProjectDetails.IsActive == 1)
+            )
+        if project_id > 0:
+            statement = select(ProjectDetails).where(
+                and_(ProjectDetails.ProjectID == project_id, ProjectDetails.IsActive == 1)
+            )
 
         try:
             with Session(self.engine) as session:
@@ -244,11 +250,13 @@ class PageLayoutCrud(DBEngine):
     def __init__(self):
         super().__init__()
 
-    def create(self, layout: dict):
+    def create(self, page_name: str, layout: dict):
         try:
             with Session(self.engine) as session:
                 new_page_layout = PageLayout()
+                new_page_layout.PageName = page_name
                 new_page_layout.Layout = layout
+
                 session.add(new_page_layout)
                 session.commit()
                 return True
@@ -263,13 +271,15 @@ class PageLayoutCrud(DBEngine):
         with Session(self.engine) as session:
             return session.execute(statement).scalars().all()
 
-    def update(self, page_id: int, layout: dict = None, is_active: int = 1):
+    def update(self, page_id: int, page_name: str = "", layout: dict = None, is_active: int = 1):
         try:
             with Session(self.engine) as session:
                 page_layout = session.get(PageLayout, page_id)
                 if not page_layout:
                     return False
 
+                if page_name:
+                    page_layout.PageName = page_name
                 if layout:
                     page_layout.Layout = layout
                 if is_active == 0:

@@ -53,6 +53,7 @@ class PageLayout(BaseClass):
     __tablename__ = "PageLayout"
 
     PageID: Mapped[int] = mapped_column(primary_key=True, autoincrement = True)
+    PageName: Mapped[str]
     Layout: Mapped[dict] = mapped_column(JSONB)
     CreatedDate: Mapped[datetime] = mapped_column(default=datetime.utcnow())
     ModifiedDate: Mapped[datetime] = mapped_column(insert_default=datetime.utcnow(), onupdate=datetime.utcnow())

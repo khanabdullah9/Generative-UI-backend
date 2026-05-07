@@ -24,8 +24,8 @@ class ProjectMasterModel(BaseModel):
 
 class ProjectDetailModel(BaseModel):
     detail_id: int = 0
-    project_id: int
-    page_id: int    
+    project_id: int = 0
+    page_id: int = 0
     is_active: int = 1
 
 class ProjectUserModel(BaseModel):
@@ -36,7 +36,8 @@ class ProjectUserModel(BaseModel):
 
 class PageLayoutModel(BaseModel):
     page_id: int = 0
-    layout: dict
+    page_name: str = ""
+    layout: dict = None
     is_active: int  = 1
 
 class PageDataModel(BaseModel):
@@ -49,3 +50,12 @@ class ListProjectModel(BaseModel):
     project_id: int
     manager_id: int
     name: str
+
+class ListProjectPagesModel(BaseModel):
+    """Pydantic model for Project's page list
+
+    Args:
+        BaseModel (_type_): Pydantic BaseModel
+    """
+    page_id: int
+    page_name: str
