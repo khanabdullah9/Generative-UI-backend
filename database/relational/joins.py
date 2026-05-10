@@ -35,7 +35,7 @@ def get_all_projects(user_id):
             )
             results = session.execute(statement)
             if results:
-                return results.fetchall()
+                return results.mappings().all()
         return []
     except Exception as err:
         log_error(str(err))
@@ -97,7 +97,7 @@ def get_project_pages(project_id: int = 0):
             )
             result = session.execute(statement)
             if result:
-                return result.fetchall()
+                return result.mappings().all()
             return []
     except Exception as err:
         log_error(str(err))

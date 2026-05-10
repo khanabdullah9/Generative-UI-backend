@@ -44,14 +44,15 @@ class UserMasterCrud(DBEngine):
             log_error(str(err))
             return False
 
-    def read(self, id = 0):
-        statement = select(UserMaster)
-        if id > 0:
-            statement = select(UserMaster).where(UserMaster.UserID == id)
+    def read(self, user_id = 0):
+        statement = select(UserMaster.UserID, UserMaster.FirstName, UserMaster.LastName)
+        if user_id > 0:
+            statement = statement.where(UserMaster.UserID == user_id)
         
         try:
             with Session(self.engine) as session:
-                return session.execute(statement).scalars().all()
+                result = session.execute(statement)
+                return result.mappings().all()
         except Exception as err:
             log_error(str(err))
 
@@ -105,7 +106,7 @@ class ProjectMasterCrud(DBEngine):
 
         try:
             with Session(self.engine) as session:
-                return session.execute(statement).scalars().all()
+                return session.execute(statement).mappings().all()
         except Exception as err:
             log_error(str(err))
             return []
@@ -218,7 +219,7 @@ class ProjectDetailsCrud(DBEngine):
 
         try:
             with Session(self.engine) as session:
-                return session.execute(statement).scalars().all()
+                return session.execute(statement).mappings().all()
         except Exception as err:
             log_error(str(err))
         return []

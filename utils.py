@@ -18,6 +18,8 @@ formatter = logging.Formatter("{asctime} - {levelname} - {message}", style="{", 
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+EMPTY_STRING = ""; EMPTY_DICT = {}
+
 def log_error(err_msg: str):
     logger.error(err_msg)
 
@@ -29,7 +31,7 @@ def generate_random_id():
 
 def get_database_config():
     if not os.path.exists("app_config.json"):
-        return {}
+        return EMPTY_DICT
 
     with open("app_config.json","r") as r:
         data = json.load(r)
@@ -37,4 +39,41 @@ def get_database_config():
     if "database" in data:
         return data["database"]
 
-    return {}
+    return EMPTY_DICT
+
+
+def get_ollama_conf(key_name=""):
+    if not os.path.exists("app_config.json"):
+        return EMPTY_DICT
+
+    with open("app_config.json", "r") as f:
+        data = json.load(f)
+    if not data:
+        return EMPTY_DICT
+
+    if key_name and key_name in data["Ollama"]:
+        return data["Ollama"][key_name]
+    return data["Ollama"]
+
+def get_form_layout():
+    if not os.path.exists("form_layout.json"):
+        return EMPTY_STRING
+
+    with open("form_layout.json", "r") as f:
+        return json.dumps(json.load(f))
+
+
+def get_supported_field_types():
+    if not os.path.exists("app_config.json"):
+        return EMPTY_STRING
+
+    with open("app_config.json", "r") as f:
+        data = json.load(f)
+
+    if not data:
+        return EMPTY_STRING
+    if "Supported_Input_Fields_Type" not in data:
+        return EMPTY_STRING
+
+    supported = data["Supported_Input_Fields_Type"]
+    return ", ".join("'" + elem + "'" for elem in supported)

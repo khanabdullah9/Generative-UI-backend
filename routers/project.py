@@ -1,8 +1,8 @@
-from fastapi import FastAPI, APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException
 import json
 
-from models.models import ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, PageDataModel, ListProjectModel, ListProjectPagesModel
-from database.relational.crud import ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, PageLayoutCrud, PageDataCrud
+from models.models import UserModel, ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, PageDataModel, ListProjectModel, ListProjectPagesModel
+from database.relational.crud import UserMasterCrud, ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, PageLayoutCrud, PageDataCrud
 from database.relational import joins
 from utils import log_info
 
@@ -13,14 +13,13 @@ def get_project(project_id: int = 0):
     obj = ProjectMasterCrud()
     return obj.read(project_id)
 
-@router.get("/get_all_projects/", status_code=status.HTTP_200_OK, response_model=list[ListProjectModel])
+@router.get("/get_all_projects/", status_code=status.HTTP_200_OK)
 def get_all_projects(user_id: int):
     results = joins.get_all_projects(user_id)
     if not results:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    keys = ["project_id","manager_id","name"]
-    return [dict(zip(keys, row)) for row in results]
+    return results
 
 @router.post("/create_project/", status_code=status.HTTP_201_CREATED)
 def create_project(project: ProjectMasterModel):
@@ -53,6 +52,13 @@ def delete_project(project: ProjectMasterModel):
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project deletion failed")
     return {"message": "Project deletion successful"}
+
+# USER MASTER
+@router.get("/get_user/", status_code = status.HTTP_200_OK)
+def get_user(user_id: int):
+    obj = UserMasterCrud()
+    results = obj.read(user_id)
+    return results
 
 # PROJECT USER
 @router.post("/add_project_user/", status_code=status.HTTP_201_CREATED)
@@ -101,7 +107,7 @@ def get_project_details(detail_id:int, project_id: int):
 
     return result
 
-@router.get("/get_project_pages/", status_code = status.HTTP_200_OK, response_model = list[ListProjectPagesModel])
+@router.get("/get_project_pages/", status_code = status.HTTP_200_OK)
 def get_project_pages(project_id: int):
     """Get Project Pages list
 
@@ -116,8 +122,7 @@ def get_project_pages(project_id: int):
     """
     results = joins.get_project_pages(project_id)
 
-    keys = ["page_id","page_name"]
-    return [dict(zip(keys, row)) for row in results]
+    return results
 
 @router.post("/create_project_detail/", status_code=status.HTTP_201_CREATED)
 def create_project_detail(project: ProjectDetailModel):

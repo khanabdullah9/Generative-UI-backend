@@ -3,3 +3,5 @@ requests
 pymongo
 SQLAlchemy
 psycopg2
+langchain
+langchain-ollama

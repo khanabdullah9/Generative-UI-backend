@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 class SaveDataModel(BaseModel):
@@ -9,10 +9,10 @@ class SaveDataModel(BaseModel):
 
 class UserModel(BaseModel):
     user_id: int | None = 0
-    first_name: str
-    last_name: str
-    email: str
-    password: str
+    first_name: str = ""
+    last_name: str = ""
+    email: str = ""
+    password: str = ""
     is_active: int | None = 1
 
 class ProjectMasterModel(BaseModel):
@@ -59,3 +59,6 @@ class ListProjectPagesModel(BaseModel):
     """
     page_id: int
     page_name: str
+
+class Prompt(BaseModel):
+    text: str
