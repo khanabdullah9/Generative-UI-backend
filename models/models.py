@@ -62,3 +62,8 @@ class ListProjectPagesModel(BaseModel):
 
 class Prompt(BaseModel):
     text: str
+
+class ApprovePageModel(BaseModel):
+    project_id: int
+    page_name: str
+    layout: dict

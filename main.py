@@ -5,11 +5,12 @@ from models.models import SaveDataModel
 from database.nosql.crud import CRUD
 from utils import log_info
 from database.nosql import project
-from routers import users, project
+from routers import users, project, inference
 
 app = FastAPI()
 app.include_router(users.router)
 app.include_router(project.router)
+app.include_router(inference.router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],

@@ -18,7 +18,7 @@ formatter = logging.Formatter("{asctime} - {levelname} - {message}", style="{", 
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-EMPTY_STRING = ""; EMPTY_DICT = {}
+EMPTY_STRING = "";
 
 def log_error(err_msg: str):
     logger.error(err_msg)
@@ -29,31 +29,43 @@ def log_info(info_msg: str):
 def generate_random_id():
     return datetime.now().strftime("%d%m%Y%H%M%S")
 
-def get_database_config():
+def read_app_config(key_name: str):
     if not os.path.exists("app_config.json"):
-        return EMPTY_DICT
-
-    with open("app_config.json","r") as r:
-        data = json.load(r)
-
-    if "database" in data:
-        return data["database"]
-
-    return EMPTY_DICT
-
-
-def get_ollama_conf(key_name=""):
-    if not os.path.exists("app_config.json"):
-        return EMPTY_DICT
+        return {}
 
     with open("app_config.json", "r") as f:
         data = json.load(f)
     if not data:
-        return EMPTY_DICT
+        return {}
 
-    if key_name and key_name in data["Ollama"]:
-        return data["Ollama"][key_name]
-    return data["Ollama"]
+    if key_name not in data:
+        return {}
+
+    return data[key_name]
+
+def get_database_config():
+    return read_app_config("database")
+
+
+def get_ollama_conf(key_name=""):
+    return read_app_config("Ollama")
+
+def get_llm_source():
+    return read_app_config("LLM")["source"]
+
+def construct_llm_url():
+    llm_conf = read_app_config("LLM")
+    if not llm_conf:
+        return EMPTY_STRING
+
+    match llm_conf["source"]:
+        case "runpod":
+            return f"https://{llm_conf["POD_ID"]}-{str(llm_conf["PORT"])}.proxy.runpod.net"
+        case _:
+            return EMPTY_STRING
+
+def get_supported_field_types():
+    return read_app_config("Supported_Input_Fields_Type")
 
 def get_form_layout():
     if not os.path.exists("form_layout.json"):
@@ -63,17 +75,3 @@ def get_form_layout():
         return json.dumps(json.load(f))
 
 
-def get_supported_field_types():
-    if not os.path.exists("app_config.json"):
-        return EMPTY_STRING
-
-    with open("app_config.json", "r") as f:
-        data = json.load(f)
-
-    if not data:
-        return EMPTY_STRING
-    if "Supported_Input_Fields_Type" not in data:
-        return EMPTY_STRING
-
-    supported = data["Supported_Input_Fields_Type"]
-    return ", ".join("'" + elem + "'" for elem in supported)

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, status, HTTPException
 
-from backend.models.models import Prompt
-from backend.LLM.infer_ollama import is_ollama_running, execute_chain
+from models.models import Prompt
+from LLM.infer_ollama import is_ollama_running, execute_chain
 
-router = APIRouter(prefix = "/api/infer/")
+router = APIRouter(prefix = "/api/infer")
 
 @router.get("/is_ollama_responsive/", status_code= status.HTTP_200_OK)
 def is_ollama_responsive():

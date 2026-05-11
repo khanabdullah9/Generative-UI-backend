@@ -44,11 +44,15 @@ class UserMasterCrud(DBEngine):
             log_error(str(err))
             return False
 
-    def read(self, user_id = 0):
+    def read(self, user_id:int = 0,  email: str = "", password: str = ""):
         statement = select(UserMaster.UserID, UserMaster.FirstName, UserMaster.LastName)
         if user_id > 0:
             statement = statement.where(UserMaster.UserID == user_id)
-        
+        if email and password:
+            statement = statement.where(
+                and_(UserMaster.Email == email, UserMaster.Password == password)
+            )
+
         try:
             with Session(self.engine) as session:
                 result = session.execute(statement)
@@ -260,10 +264,10 @@ class PageLayoutCrud(DBEngine):
 
                 session.add(new_page_layout)
                 session.commit()
-                return True
+                return True, new_page_layout.PageID
         except Exception as err:
             log_error(str(err))
-            return False
+            return False, 0
 
     def read(self, page_id:int = 0):
         statement = select(PageLayout)

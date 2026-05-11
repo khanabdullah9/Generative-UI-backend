@@ -13,10 +13,10 @@ router = APIRouter(
 def root():
     return "Routing is working!"
 
-@router.get("/get_user/{user_id}", status_code=status.HTTP_200_OK)
-def get_user(user_id: int):
+@router.get("/get_user/", status_code=status.HTTP_200_OK)
+def get_user(user_id: int = 0, email: str = "", password: str = ""):
     obj = UserMasterCrud()
-    return obj.read(id = user_id)
+    return obj.read(user_id, email, password)
 
 @router.post("/create_user/", status_code=status.HTTP_201_CREATED)
 def create_user(user: UserModel):
@@ -36,9 +36,4 @@ def update_user(user: UserModel):
 
 @router.post("/set_user_inactive/")
 def delete_user(user: UserModel):
-    pass
-
-
-@router.post("/replace_user/")
-def replace_user(user: user_model):
     pass

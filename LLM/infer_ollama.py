@@ -5,13 +5,13 @@ import requests
 import time
 import json
 
-from utils import get_ollama_conf, log_error, log_info, get_form_layout, get_supported_field_types, EMPTY_DICT
+import utils
 
-OLLAMA_CONF = get_ollama_conf()
-POD_ID = OLLAMA_CONF["POD_ID"]
-PORT = OLLAMA_CONF["PORT"]
-BASE_URL = f"https://{POD_ID}-{str(PORT)}.proxy.runpod.net"
 
+BASE_URL = utils.construct_llm_url()
+SOURCE = utils.get_llm_source()
+
+# default LLM is ollama # utilize SOURCE to instantiate other llm classes
 llm = ChatOllama(
     model="llama3:8b",
     base_url=BASE_URL,
@@ -32,7 +32,7 @@ few_shot_prompt = FewShotChatMessagePromptTemplate(
     examples=[
         {
             "prompt": "Create a form to collect student data for admission.",
-            "output": get_form_layout()
+            "output": utils.get_form_layout()
         }
     ]
 )
@@ -41,7 +41,7 @@ prompt = ChatPromptTemplate.from_messages([
     ("system", "You are a senior UI architect"),
     ("system", "You are supposed to design the layout for react based forms and describe them in json."),
     ("system", "You are only supposed to return JSON"),
-    ("system", f"Supported field types are {get_supported_field_types()}"),
+    ("system", f"Supported field types are {utils.get_supported_field_types()}"),
     few_shot_prompt,
     ("user", "{user_prompt}")
 ])
@@ -53,31 +53,26 @@ ollama_chain = partial_prompt | llm | parser
 
 def is_ollama_running():
     try:
-        response = requests.get(f"{BASE_URL}/api/tags", timeout=5)
-        log_info(f"pinging pod .... -> {str(response.status_code)}")
+        response = requests.get(f"{BASE_URL}/api/tags", timeout=30)
+        utils.log_info(f"pinging pod .... -> {str(response.status_code)}")
         return response.status_code == 200
     except Exception as err:
-        log_error(str(err))
+        utils.log_error(str(err))
         return False
 
 def execute_chain(prompt: str):
     try:
-        form_layout = get_form_layout()
-        if not form_layout:
-            return EMPTY_DICT
-
         start = time.perf_counter()
         response = ollama_chain.invoke({
-            "form_layout": form_layout,
             "user_prompt": prompt
         })
         end = time.perf_counter()
 
-        log_info(f"Exec time: {(end - start)}s")
-        return json.dumps(response)
+        utils.log_info(f"Exec time: {(end - start)}s")
+        return response
     except Exception as err:
-        log_error(str(err))
-        return EMPTY_DICT
+        utils.log_error(str(err))
+        return {}
 
 
 def calculate_num_tokens(prompt: str):

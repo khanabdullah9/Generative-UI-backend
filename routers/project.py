@@ -1,9 +1,9 @@
 from fastapi import APIRouter, status, HTTPException
 import json
 
-from models.models import UserModel, ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, PageDataModel, ListProjectModel, ListProjectPagesModel
+from models.models import UserModel, ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, PageDataModel, ListProjectModel, ListProjectPagesModel, ApprovePageModel
 from database.relational.crud import UserMasterCrud, ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, PageLayoutCrud, PageDataCrud
-from database.relational import joins
+from database.relational import joins, transact
 from utils import log_info
 
 router = APIRouter(prefix="/api/project")
@@ -80,13 +80,21 @@ def delete_project_user(project: ProjectUserModel):
     return {"message": "Project user deletion successful"}
 
 # PROJECT LAYOUT
+@router.post("/approve_page/", status_code=status.HTTP_201_CREATED)
+def approve_page(data: ApprovePageModel):
+    success = transact.approve_page(page_name = data.page_name, project_id = data.project_id, layout = data.layout)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Page Approval failed")
+
+    return {"message": "Page APPROVED successful"}
+
 @router.post("/save_page_layout/", status_code=status.HTTP_201_CREATED)
 def save_page_layout(project: PageLayoutModel):
     obj = PageLayoutCrud()
-    success = obj.create(page_name = project.page_name, layout = project.layout)
+    success, inserted_id = obj.create(page_name = project.page_name, layout = project.layout)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project layout creation failed")
-    return {"message": "Project layout saved successful"}
+    return {"message": "Project layout saved successful", "inserted_id": inserted_id}
 
 @router.post("/replace_page_layout/", status_code=status.HTTP_200_OK)
 def replace_page_layout(project: PageLayoutModel):

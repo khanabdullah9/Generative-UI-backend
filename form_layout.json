@@ -1,0 +1,68 @@
+{
+  "Row1": [
+    {
+      "Type": "text",
+      "Label": "First Name",
+      "Name": "first_name",
+      "Placeholder": "Enter First Name",
+      "Required": true
+    },
+    {
+      "Type": "text",
+      "Label": "Last Name",
+      "Name": "last_name",
+      "Placeholder": "Enter Last Name",
+      "Required": true
+    },
+    {
+      "Type": "date",
+      "Label": "Date of Birth",
+      "Name": "date_of_birth",
+      "Placeholder": "Select Date",
+      "Required": true
+    }
+  ],
+  "Row2": [
+    {
+      "Type": "select",
+      "Label": "Gender",
+      "Name": "gender",
+      "Placeholder": "Select",
+      "Required": true,
+      "Options": ["Male","Female","Other"]
+    },
+    {
+      "Type": "text",
+      "Label": "Email Address",
+      "Name": "email",
+      "Placeholder": "Enter Email",
+      "Required": true
+    }
+  ],
+  "Row3": [
+    {
+      "Type": "text",
+      "Label": "Phone Number",
+      "Name": "phone_number",
+      "Placeholder": "Enter Phone Number",
+      "Required": true
+    },
+    {
+      "Type": "select",
+      "Label": "Class",
+      "Name": "class",
+      "Placeholder": "Select Class",
+      "Required": true,
+      "Options": ["Grade 1","Grade 2", "Grade 3"]
+    }
+  ],
+  "Row4": [
+    {
+      "Type": "textarea",
+      "Label": "Address",
+      "Name": "address",
+      "Placeholder": "Enter Address",
+      "Required": true
+    }
+  ]
+}
