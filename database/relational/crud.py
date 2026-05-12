@@ -270,11 +270,11 @@ class PageLayoutCrud(DBEngine):
             return False, 0
 
     def read(self, page_id:int = 0):
-        statement = select(PageLayout)
+        statement = select(PageLayout.Layout)
         if page_id > 0:
-            statement = select(PageLayout).where(PageLayout.PageID == page_id)
+            statement = select(PageLayout.Layout).where(PageLayout.PageID == page_id)
         with Session(self.engine) as session:
-            return session.execute(statement).scalars().all()
+            return session.execute(statement).mappings().all()
 
     def update(self, page_id: int, page_name: str = "", layout: dict = None, is_active: int = 1):
         try:

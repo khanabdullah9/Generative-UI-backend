@@ -80,13 +80,22 @@ def delete_project_user(project: ProjectUserModel):
     return {"message": "Project user deletion successful"}
 
 # PROJECT LAYOUT
+@router.get("/get_page_layout/", status_code = status.HTTP_200_OK)
+def get_page_layout(page_id: int):
+    obj = PageLayoutCrud()
+    result = obj.read(page_id = page_id)
+    if not result:
+        return []
+
+    return result[0]["Layout"]
+
 @router.post("/approve_page/", status_code=status.HTTP_201_CREATED)
 def approve_page(data: ApprovePageModel):
     success = transact.approve_page(page_name = data.page_name, project_id = data.project_id, layout = data.layout)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Page Approval failed")
 
-    return {"message": "Page APPROVED successful"}
+    return {"message": "Page APPROVED successful", "status_code":201}
 
 @router.post("/save_page_layout/", status_code=status.HTTP_201_CREATED)
 def save_page_layout(project: PageLayoutModel):
@@ -126,7 +135,7 @@ def get_project_pages(project_id: int):
         HTTPException: if no match for the data
 
     Returns:
-        list[ListProjectPagesModel]: Pydantic rep.. of project pages
+        list:
     """
     results = joins.get_project_pages(project_id)
 
