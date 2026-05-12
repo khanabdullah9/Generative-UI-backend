@@ -1,7 +1,8 @@
 from fastapi import APIRouter, status, HTTPException
 import json
 
-from models.models import UserModel, ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, PageDataModel, ListProjectModel, ListProjectPagesModel, ApprovePageModel
+from models.models import UserModel, ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, \
+    PageDataModel, ListProjectModel, ListProjectPagesModel, ApprovePageModel, CreateProjectModel
 from database.relational.crud import UserMasterCrud, ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, PageLayoutCrud, PageDataCrud
 from database.relational import joins, transact
 from utils import log_info
@@ -28,6 +29,22 @@ def create_project(project: ProjectMasterModel):
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project creation failed")
     return {"message": "Project creation successful","project_id": inserted_id}
+
+@router.post("/create_project_with_manager/", status_code=status.HTTP_201_CREATED)
+def create_project_only(model: CreateProjectModel):
+    """
+    Creates ProjectMaster entry and enters the user/manager (creator) in the ProjectUser
+    Args:
+        model: Pydantic model rep...
+
+    Returns: JSON
+
+    """
+    success = transact.create_project_with_manager(user_id = model.user_id, proj_name = model.proj_name, proj_desc = model.proj_desc)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project creation failed")
+
+    return {"message": "Project creation successful", "status_code":201}
 
 @router.post("/create_project_only/", status_code=status.HTTP_201_CREATED)
 def create_project_only(project: ProjectMasterModel):

@@ -67,3 +67,11 @@ class ApprovePageModel(BaseModel):
     project_id: int
     page_name: str
     layout: dict
+
+class CreateProjectModel(BaseModel):
+    """
+    Model for creating a project and entering the project user
+    """
+    user_id: int
+    proj_name: str
+    proj_desc: str
