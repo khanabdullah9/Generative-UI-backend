@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status, HTTPException
 
+import utils
 from models.models import Prompt
 from LLM.infer_ollama import is_ollama_running, execute_chain
 
@@ -15,3 +16,15 @@ def infer_ollama(prompt: Prompt):
         return {}
 
     return execute_chain(prompt.text)
+
+@router.post("/mock_infer/", status_code=status.HTTP_200_OK)
+def mock_infer(prompt: Prompt):
+    """
+    For testing the UI
+    Args:
+        prompt: user prompt pydantic model
+
+    Returns: JSON: pre generated layout
+
+    """
+    return utils.get_form_layout()

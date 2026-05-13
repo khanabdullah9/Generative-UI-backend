@@ -17,8 +17,6 @@ def get_project(project_id: int = 0):
 @router.get("/get_all_projects/", status_code=status.HTTP_200_OK)
 def get_all_projects(user_id: int):
     results = joins.get_all_projects(user_id)
-    if not results:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     return results
 
@@ -187,11 +185,10 @@ def delete_project_detail(project: ProjectDetailModel):
 # PAGE DATA
 @router.post("/save_page_data/", status_code=status.HTTP_201_CREATED)
 def save_page_data(project: PageDataModel):
-    obj = PageDataCrud()
-    success = obj.create(project.proj_detail_id, project.data)
-
+    success = transact.save_page_data(page_id = project.page_id, form_data = project.data)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Page data save failed")
+
     return {"message": "Page data saved successful"}
 
 @router.post("/replace_page_data/", status_code=status.HTTP_201_CREATED)

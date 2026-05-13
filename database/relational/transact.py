@@ -1,8 +1,8 @@
-from sqlalchemy import create_engine, select, outerjoin, join, or_, and_
+from sqlalchemy import  select, insert, and_
 from sqlalchemy.orm import Session
 
 from database.relational.crud import DBEngine
-from database.relational.tables import ProjectDetails, PageLayout, ProjectMaster, ProjectUsers
+from database.relational.tables import ProjectDetails, PageLayout, ProjectMaster, ProjectUsers, PageData
 from utils import log_error
 
 def start_engine():
@@ -75,5 +75,37 @@ def create_project_with_manager(user_id: int, proj_name: str, proj_desc: str) ->
             session.rollback()
             return False
 
+
+def save_page_data(page_id: int, form_data: dict) -> bool:
+    engine = start_engine()
+    if not engine:
+        return False
+
+    with Session(engine) as session:
+        try:
+            proj_dtl_id = (
+                select(ProjectDetails.DetailID)
+                .distinct() # to avoid multiple returns # HIGHLY unlikely
+                .where(
+                    and_(ProjectDetails.PageID == page_id, ProjectDetails.IsActive == 1)
+                )
+                .scalar_subquery()
+            )
+
+            # stmt = insert(PageData).values(
+            #     Data = form_data,
+            #     ProjDetailID = proj_dtl_id
+            # )
+            new_page_data = PageData()
+            new_page_data.Data = form_data
+            new_page_data.ProjDetailID = proj_dtl_id
+            session.add(new_page_data)
+
+            session.commit()
+            return True
+        except Exception as err:
+            log_error(str(err))
+            session.rollback()
+            return False
 
 

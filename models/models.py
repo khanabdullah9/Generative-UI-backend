@@ -42,7 +42,8 @@ class PageLayoutModel(BaseModel):
 
 class PageDataModel(BaseModel):
     page_data_id: int = 0
-    proj_detail_id: int
+    page_id: int = 0
+    proj_detail_id: int = 0
     data: dict
     is_active: int = 1
 
