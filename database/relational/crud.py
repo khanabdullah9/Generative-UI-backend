@@ -331,7 +331,7 @@ class PageDataCrud(DBEngine):
                 .where(ProjectDetails.PageID == page_id)
                 .scalar_subquery()
             )
-            statement = select(PageData).where(PageData.ProjDetailID == proj_dtl_id)
+            statement = select(PageData.Data).where(PageData.ProjDetailID == proj_dtl_id)
             with Session(self.engine) as session:
                 return session.execute(statement).mappings().all()
         except Exception as err:

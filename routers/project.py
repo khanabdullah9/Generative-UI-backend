@@ -186,7 +186,9 @@ def delete_project_detail(project: ProjectDetailModel):
 @router.get("/get_page_data_report/", status_code = status.HTTP_200_OK)
 def get_page_data_report(page_id: int):
     obj = PageDataCrud()
-    return obj.read_for_report(page_id)
+    results = obj.read_for_report(page_id)
+
+    return [d["Data"] for d in results]
 
 @router.post("/save_page_data/", status_code=status.HTTP_201_CREATED)
 def save_page_data(project: PageDataModel):
