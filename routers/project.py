@@ -183,6 +183,11 @@ def delete_project_detail(project: ProjectDetailModel):
     return {"message": "Project detail deletion successful"}
 
 # PAGE DATA
+@router.get("/get_page_data_report/", status_code = status.HTTP_200_OK)
+def get_page_data_report(page_id: int):
+    obj = PageDataCrud()
+    return obj.read_for_report(page_id)
+
 @router.post("/save_page_data/", status_code=status.HTTP_201_CREATED)
 def save_page_data(project: PageDataModel):
     success = transact.save_page_data(page_id = project.page_id, form_data = project.data)

@@ -323,6 +323,21 @@ class PageDataCrud(DBEngine):
         with Session(self.engine) as session:
             return session.execute(statement).scalars().all()
 
+    def read_for_report(self, page_id: int):
+        try:
+            proj_dtl_id = (
+                select(ProjectDetails.DetailID)
+                .distinct()
+                .where(ProjectDetails.PageID == page_id)
+                .scalar_subquery()
+            )
+            statement = select(PageData).where(PageData.ProjDetailID == proj_dtl_id)
+            with Session(self.engine) as session:
+                return session.execute(statement).mappings().all()
+        except Exception as err:
+            log_error(str(err))
+            return []
+
     def update(self, page_data_id: int, page_data: dict, is_active: int = 1):
         try:
             with Session(self.engine) as session:
