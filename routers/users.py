@@ -26,7 +26,7 @@ def login_user(user: UserModel):
 @router.post("/create_user/", status_code=status.HTTP_201_CREATED)
 def create_user(user: UserModel):
     obj = UserMasterCrud()
-    success = obj.create(first_name = user.first_name, last_name = user.last_name, email = user.email)
+    success = obj.create(first_name = user.first_name, last_name = user.last_name, email = user.email, password = user.password)
     if not success:
         raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail = "User creation failed")
     return {"message": "User created successfully"}

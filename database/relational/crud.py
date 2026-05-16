@@ -28,13 +28,14 @@ class UserMasterCrud(DBEngine):
     def __init__(self):
         super().__init__()
 
-    def create(self, first_name, last_name, email):
+    def create(self, first_name, last_name, email, password):
         try:
             with Session(self.engine) as session:
                 new_user = UserMaster()
                 new_user.FirstName = first_name
                 new_user.LastName = last_name
                 new_user.Email = email
+                new_user.Password = password
                 
                 session.add(new_user)
                 session.commit()
