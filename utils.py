@@ -53,6 +53,9 @@ def get_ollama_conf(key_name=""):
 def get_llm_source():
     return read_app_config("LLM")["source"]
 
+def get_llm_model_name():
+    return read_app_config("LLM")["MODEL"]
+
 def construct_llm_url():
     llm_conf = read_app_config("LLM")
     if not llm_conf:

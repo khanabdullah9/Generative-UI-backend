@@ -12,8 +12,8 @@ def is_ollama_responsive():
 
 @router.post("/infer_ollama/", status_code=status.HTTP_200_OK)
 def infer_ollama(prompt: Prompt):
-    if not is_ollama_running():
-        return {}
+    # if not is_ollama_running(): # temp.. using groq's llama api
+    #     return {}
 
     return execute_chain(prompt.text)
 

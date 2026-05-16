@@ -1,22 +1,33 @@
 from langchain_ollama import ChatOllama
+from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
+from dotenv import load_dotenv
 import requests
 import time
-import json
+import os
 
 import utils
 
 
 BASE_URL = utils.construct_llm_url()
 SOURCE = utils.get_llm_source()
+MODEL_NAME = utils.get_llm_model_name()
 
 # default LLM is ollama # utilize SOURCE to instantiate other llm classes
-llm = ChatOllama(
-    model="llama3:8b",
-    base_url=BASE_URL,
-    num_ctx=4096,
-    num_predict=1024,
+# llm = ChatOllama(
+#     model="llama3:8b",
+#     base_url=BASE_URL,
+#     num_ctx=4096,
+#     num_predict=1024,
+#     temperature=0
+# )
+
+load_dotenv()
+groq_api_key = os.getenv("GROQ_API_KEY")
+llm = ChatGroq(
+    model=MODEL_NAME,
+    api_key = groq_api_key,
     temperature=0
 )
 
