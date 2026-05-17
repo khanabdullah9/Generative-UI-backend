@@ -139,6 +139,7 @@ def create_user(first_name: str, last_name: str, email: str, password: str):
             session.add(new_usage)
 
             session.commit()
+            return True
         except Exception as err:
             log_error(str(err))
             session.rollback()
