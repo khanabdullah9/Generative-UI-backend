@@ -48,10 +48,12 @@ class UserMasterCrud(DBEngine):
     def read(self, user_id:int = 0,  email: str = "", password: str = ""):
         statement = select(UserMaster.UserID, UserMaster.FirstName, UserMaster.LastName)
         if user_id > 0:
-            statement = statement.where(UserMaster.UserID == user_id)
+            statement = statement.where(
+                and_(UserMaster.UserID == user_id, UserMaster.IsActive == 1)
+            )
         if email and password:
             statement = statement.where(
-                and_(UserMaster.Email == email, UserMaster.Password == password)
+                and_(UserMaster.Email == email, UserMaster.Password == password, UserMaster.IsActive == 1)
             )
 
         try:
@@ -107,7 +109,9 @@ class ProjectMasterCrud(DBEngine):
     def read(self, project_id = 0):
         statement = select(ProjectMaster)
         if project_id > 0:
-            statement = select(ProjectMaster).where(ProjectMaster.ProjectID == project_id)
+            statement = select(ProjectMaster).where(
+                and_(ProjectMaster.ProjectID == project_id, ProjectMaster.IsActive == 1)
+            )
 
         try:
             with Session(self.engine) as session:
@@ -161,7 +165,9 @@ class ProjectUserCrud(DBEngine):
     def read(self, project_user_id:int):
         statement = select(ProjectUsers)
         if project_user_id > 0:
-            statement = select(ProjectUsers).where(ProjectUsers.ProjUserID == project_user_id)
+            statement = select(ProjectUsers).where(
+                and_(ProjectUsers.ProjUserID == project_user_id, ProjectUsers.IsActive == 1)
+            )
 
         try:
             with Session(self.engine) as session:
@@ -273,7 +279,9 @@ class PageLayoutCrud(DBEngine):
     def read(self, page_id:int = 0):
         statement = select(PageLayout.Layout)
         if page_id > 0:
-            statement = select(PageLayout.Layout).where(PageLayout.PageID == page_id)
+            statement = select(PageLayout.Layout).where(
+                and_(PageLayout.PageID == page_id, PageLayout.IsActive == 1)
+            )
         with Session(self.engine) as session:
             return session.execute(statement).mappings().all()
 
@@ -320,7 +328,9 @@ class PageDataCrud(DBEngine):
     def read(self, page_data_id: int = 0):
         statement = select(PageData)
         if page_data_id > 0:
-            statement = select(PageData).where(PageData.PageDataID == page_data_id)
+            statement = select(PageData).where(
+                and_(PageData.PageDataID == page_data_id, PageData.IsActive == 1)
+            )
         with Session(self.engine) as session:
             return session.execute(statement).scalars().all()
 
@@ -329,10 +339,14 @@ class PageDataCrud(DBEngine):
             proj_dtl_id = (
                 select(ProjectDetails.DetailID)
                 .distinct()
-                .where(ProjectDetails.PageID == page_id)
+                .where(
+                    and_(ProjectDetails.PageID == page_id, ProjectDetails.IsActive == 1)
+                )
                 .scalar_subquery()
             )
-            statement = select(PageData.Data).where(PageData.ProjDetailID == proj_dtl_id)
+            statement = select(PageData.Data).where(
+                and_(PageData.ProjDetailID == proj_dtl_id, PageData.IsActive == 1)
+            )
             with Session(self.engine) as session:
                 return session.execute(statement).mappings().all()
         except Exception as err:
@@ -378,7 +392,9 @@ class UsageCrud(DBEngine):
             return False
 
     def read(self, user_id: int):
-        statement = select(Usage.UsageCount).where(Usage.UserID == user_id)
+        statement = select(Usage.UsageCount).where(
+            and_(Usage.UserID == user_id, Usage.IsActive == 1)
+        )
         with Session(self.engine) as session:
             return session.execute(statement).mappings().all()
 

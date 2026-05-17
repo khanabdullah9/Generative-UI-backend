@@ -119,7 +119,7 @@ def login_user(email: str, password: str):
                 )
                 .join(Usage, Usage.UserID == UserMaster.UserID)
                 .where(
-                    and_(UserMaster.Email == email, UserMaster.Password == password)
+                    and_(UserMaster.Email == email, UserMaster.Password == password, UserMaster.IsActive == 1, Usage.IsActive == 1)
                 )
             )
             result = session.execute(statement)

@@ -33,4 +33,10 @@ def mock_infer(prompt: Prompt):
     Returns: JSON: pre generated layout
 
     """
+
+    obj = UsageCrud()
+    success = obj.update(user_id=prompt.user_id)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Usage incrementation failed")
+
     return utils.get_form_layout()
