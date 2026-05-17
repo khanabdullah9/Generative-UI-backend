@@ -76,6 +76,15 @@ def create_project_with_manager(user_id: int, proj_name: str, proj_desc: str) ->
             return False
 
 def save_page_data(page_id: int, form_data: dict) -> bool:
+    """
+    Save the form data
+    Args:
+        page_id: id of the page layout
+        form_data: user form data
+
+    Returns: bool: acknowledgement
+
+    """
     engine = start_engine()
     if not engine:
         return False
@@ -91,10 +100,6 @@ def save_page_data(page_id: int, form_data: dict) -> bool:
                 .scalar_subquery()
             )
 
-            # stmt = insert(PageData).values(
-            #     Data = form_data,
-            #     ProjDetailID = proj_dtl_id
-            # )
             new_page_data = PageData()
             new_page_data.Data = form_data
             new_page_data.ProjDetailID = proj_dtl_id
