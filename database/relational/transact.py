@@ -2,7 +2,7 @@ from sqlalchemy import  select, insert, and_
 from sqlalchemy.orm import Session
 
 from database.relational.crud import DBEngine
-from database.relational.tables import ProjectDetails, PageLayout, ProjectMaster, ProjectUsers, PageData
+from database.relational.tables import ProjectDetails, PageLayout, ProjectMaster, ProjectUsers, PageData, Usage, UserMaster
 from utils import log_error
 
 def start_engine():
@@ -75,7 +75,6 @@ def create_project_with_manager(user_id: int, proj_name: str, proj_desc: str) ->
             session.rollback()
             return False
 
-
 def save_page_data(page_id: int, form_data: dict) -> bool:
     engine = start_engine()
     if not engine:
@@ -108,4 +107,39 @@ def save_page_data(page_id: int, form_data: dict) -> bool:
             session.rollback()
             return False
 
+def create_user(first_name: str, last_name: str, email: str, password: str):
+    """
+    Insert new user (after sign-up) and start tracking their prompt usage
+    Args:
+        first_name:
+        last_name:
+        email:
+        password:
 
+    Returns:
+        bool: acknowledgement
+    """
+    engine = start_engine()
+    if not engine:
+        return False
+
+    with Session(engine) as session:
+        try:
+            new_user = UserMaster()
+            new_user.FirstName = first_name
+            new_user.LastName = last_name
+            new_user.Email = email
+            new_user.Password = password
+            session.add(new_user)
+
+            session.flush()
+
+            new_usage = Usage()
+            new_usage.UserID = new_user.UserID
+            session.add(new_usage)
+
+            session.commit()
+        except Exception as err:
+            log_error(str(err))
+            session.rollback()
+            return False

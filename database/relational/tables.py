@@ -69,3 +69,13 @@ class PageData(BaseClass):
     ModifiedDate: Mapped[datetime] = mapped_column(insert_default=datetime.utcnow(), onupdate=datetime.utcnow())
     IsActive: Mapped[int] = mapped_column(default=1)
 
+class Usage(BaseClass):
+    __tablename__ = "Usage"
+
+    UsageID: Mapped[int] = mapped_column(primary_key=True, autoincrement = True)
+    UserID: Mapped[int] = mapped_column(ForeignKey("UserMaster.UserID"))
+    UsageCount: Mapped[int] = mapped_column(default=0)
+    CreatedDate: Mapped[datetime] = mapped_column(default=datetime.utcnow())
+    ModifiedDate: Mapped[datetime] = mapped_column(insert_default=datetime.utcnow(), onupdate=datetime.utcnow())
+    IsActive: Mapped[int] = mapped_column(default=1)
+

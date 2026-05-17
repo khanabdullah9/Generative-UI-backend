@@ -63,6 +63,7 @@ class ListProjectPagesModel(BaseModel):
 
 class Prompt(BaseModel):
     text: str
+    user_id: int
 
 class ApprovePageModel(BaseModel):
     project_id: int
@@ -76,3 +77,9 @@ class CreateProjectModel(BaseModel):
     user_id: int
     proj_name: str
     proj_desc: str
+
+class UsageModel(BaseModel):
+    usage_id: int = 0
+    user_id: int
+    usage_count: int = 0
+    is_active: int = 0

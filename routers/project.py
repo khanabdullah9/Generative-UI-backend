@@ -1,9 +1,9 @@
 from fastapi import APIRouter, status, HTTPException
 import json
 
-from models.models import UserModel, ProjectMasterModel, ProjectUserModel, ProjectDetailModel, PageLayoutModel, \
-    PageDataModel, ListProjectModel, ListProjectPagesModel, ApprovePageModel, CreateProjectModel
-from database.relational.crud import UserMasterCrud, ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, PageLayoutCrud, PageDataCrud
+from models.models import *
+from database.relational.crud import UserMasterCrud, ProjectMasterCrud, ProjectUserCrud, ProjectDetailsCrud, \
+    PageLayoutCrud, PageDataCrud, UsageCrud
 from database.relational import joins, transact
 from utils import log_info
 
@@ -214,3 +214,22 @@ def delete_page_data(project: PageDataModel):
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Page data deletion failed")
     return {"message": "Page data deletion successful"}
+
+#USAGE
+@router.post("/create_usage/", status_code=status.HTTP_201_CREATED)
+def create_usage(usage: UsageModel):
+    obj = UsageCrud()
+    success = obj.create(user_id = usage.user_id)
+
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Usage creation failed")
+    return {"message": "Usage created successful"}
+
+@router.post("/increment_usage/", status_code=status.HTTP_200_OK)
+def increment_usage(usage: UsageModel):
+    obj = UsageCrud()
+    success = obj.update(user_id = usage.user_id)
+
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Usage incrementation failed")
+    return {"message": "Usage incremented successful"}

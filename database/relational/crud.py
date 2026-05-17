@@ -359,3 +359,46 @@ class PageDataCrud(DBEngine):
 
     def delete(self, page_data_id: int):
         return self.update(page_data_id = page_data_id, page_data = {}, is_active = 0)
+
+class UsageCrud(DBEngine):
+    def __init__(self):
+        super().__init__()
+
+    def create(self, user_id: int):
+        try:
+            with Session(self.engine) as session:
+                new_usage = Usage()
+                new_usage.UserID = user_id
+
+                session.add(new_usage)
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def read(self, user_id: int):
+        statement = select(Usage).where(Usage.UserID == user_id)
+        with Session(self.engine) as session:
+            return session.execute(statement).mappings().all()
+
+    def update(self, user_id:int, is_active: int = 0):
+        try:
+            with Session(self.engine) as session:
+                usage_obj = session.get(Usage, user_id)
+                if not usage_obj:
+                    return False
+
+                usage_obj.UsageCount += 1
+
+                if is_active == 0:
+                    usage_obj.IsActive = 0
+
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def delete(self, user_id: int):
+        return self.update(user_id = user_id, is_active = 0)

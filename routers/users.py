@@ -1,7 +1,6 @@
-from http.client import HTTPException
+from fastapi import FastAPI, APIRouter, status, HTTPException
 
-from fastapi import FastAPI, APIRouter, status
-
+from database.relational import transact
 from database.relational.crud import UserMasterCrud
 from models.models import UserModel
 
@@ -25,10 +24,13 @@ def login_user(user: UserModel):
 
 @router.post("/create_user/", status_code=status.HTTP_201_CREATED)
 def create_user(user: UserModel):
-    obj = UserMasterCrud()
-    success = obj.create(first_name = user.first_name, last_name = user.last_name, email = user.email, password = user.password)
+    # obj = UserMasterCrud()
+    # success = obj.create(first_name = user.first_name, last_name = user.last_name, email = user.email, password = user.password)
+
+    success = transact.create_user(first_name = user.first_name, last_name = user.last_name, email = user.email, password = user.password)
     if not success:
         raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail = "User creation failed")
+
     return {"message": "User created successfully"}
     
 @router.post("/update_user/", status_code=status.HTTP_202_ACCEPTED)

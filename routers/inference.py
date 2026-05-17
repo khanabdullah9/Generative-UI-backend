@@ -1,8 +1,9 @@
 from fastapi import APIRouter, status, HTTPException
 
 import utils
-from models.models import Prompt
+from models.models import Prompt, UsageModel
 from LLM.infer_ollama import is_ollama_running, execute_chain
+from database.relational.crud import UsageCrud
 
 router = APIRouter(prefix = "/api/infer")
 
@@ -14,6 +15,11 @@ def is_ollama_responsive():
 def infer_ollama(prompt: Prompt):
     # if not is_ollama_running(): # temp.. using groq's llama api
     #     return {}
+
+    obj = UsageCrud()
+    success = obj.update(user_id=prompt.user_id)
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Usage incrementation failed")
 
     return execute_chain(prompt.text)
 
