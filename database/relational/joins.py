@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, select, outerjoin, join, or_, and_
 from sqlalchemy.orm import Session
 
 from database.relational.crud import DBEngine
-from database.relational.tables import ProjectMaster, ProjectUsers, ProjectDetails, PageLayout
+from database.relational.tables import ProjectMaster, ProjectUsers, ProjectDetails, PageLayout, UserMaster, Usage
 from utils import log_error
 
 
@@ -102,3 +102,31 @@ def get_project_pages(project_id: int = 0):
     except Exception as err:
         log_error(str(err))
         return []
+
+def login_user(email: str, password: str):
+    engine = start_engine()
+    if not engine:
+        return []
+
+    try:
+        with Session(engine) as session:
+            statement = (
+                select(
+                    UserMaster.UserID,
+                    UserMaster.FirstName,
+                    UserMaster.LastName,
+                    Usage.UsageCount
+                )
+                .join(Usage, Usage.UserID == UserMaster.UserID)
+                .where(
+                    and_(UserMaster.Email == email, UserMaster.Password == password)
+                )
+            )
+            result = session.execute(statement)
+            if result:
+                return result.mappings().all()
+            return []
+    except Exception as err:
+        log_error(str(err))
+        return []
+

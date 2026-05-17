@@ -378,7 +378,7 @@ class UsageCrud(DBEngine):
             return False
 
     def read(self, user_id: int):
-        statement = select(Usage).where(Usage.UserID == user_id)
+        statement = select(Usage.UsageCount).where(Usage.UserID == user_id)
         with Session(self.engine) as session:
             return session.execute(statement).mappings().all()
 

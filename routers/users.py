@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter, status, HTTPException
 
-from database.relational import transact
+from database.relational import transact, joins
 from database.relational.crud import UserMasterCrud
 from models.models import UserModel
 
@@ -17,10 +17,12 @@ def get_user(user_id: int = 0, email: str = "", password: str = ""):
     obj = UserMasterCrud()
     return obj.read(user_id, email, password)
 
+
 @router.post("/login_user/", status_code = status.HTTP_200_OK)
 def login_user(user: UserModel):
-    obj = UserMasterCrud()
-    return obj.read(0, user.email, user.password)
+    # obj = UserMasterCrud()
+    # return obj.read(0, user.email, user.password)
+    return joins.login_user(email=user.email, password=user.password)
 
 @router.post("/create_user/", status_code=status.HTTP_201_CREATED)
 def create_user(user: UserModel):

@@ -216,6 +216,11 @@ def delete_page_data(project: PageDataModel):
     return {"message": "Page data deletion successful"}
 
 #USAGE
+@router.get("/get_user_usage/", status_code=status.HTTP_200_OK)
+def get_user_usage(user_id: int):
+    obj = UsageCrud()
+    return obj.read(user_id = user_id)
+
 @router.post("/create_usage/", status_code=status.HTTP_201_CREATED)
 def create_usage(usage: UsageModel):
     obj = UsageCrud()
