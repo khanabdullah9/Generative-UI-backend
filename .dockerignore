@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+*.gitignore
+.idea/
+
+# Virtual environments
+.venv
+
+/py-client
+/database/__pycache__/
+/routers/__pycache__/
+/models/__pycache__/
+/LLM/__pycache__/
+/database/nosql/__pycache__/
+/database/relational/__pycache__/

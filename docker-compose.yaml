@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root@1234
+      POSTGRES_DB: gen_ui
+    ports:
+      - "5433:5432"
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Format: [Host Path on Windows] : [Internal Container Path]
+      - ./postgres_data:/var/lib/postgresql
+    depends_on:
+      - db
