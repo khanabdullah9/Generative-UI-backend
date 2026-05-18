@@ -14,7 +14,7 @@ class DBEngine():
         dialect = db_config["dialect"]
         driver = db_config["driver"]
         username = db_config["username"]
-        server_name = db_config["server_name"]
+        server_name = "db" if db_config["env"] == "PRD" else "localhost"
         port = db_config["port"]
         db_name = db_config["database_name"]
         conn_str = f"{dialect}+{driver}://{username}:{safe_password}@{server_name}:{port}/{db_name}"
