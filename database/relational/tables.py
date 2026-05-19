@@ -55,6 +55,7 @@ class PageLayout(BaseClass):
     PageID: Mapped[int] = mapped_column(primary_key=True, autoincrement = True)
     PageName: Mapped[str]
     Layout: Mapped[dict] = mapped_column(JSONB)
+    Prompt: Mapped[str]
     CreatedDate: Mapped[datetime] = mapped_column(default=datetime.utcnow())
     ModifiedDate: Mapped[datetime] = mapped_column(insert_default=datetime.utcnow(), onupdate=datetime.utcnow())
     IsActive: Mapped[int] = mapped_column(default=1)

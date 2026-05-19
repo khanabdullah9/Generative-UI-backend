@@ -38,6 +38,7 @@ class PageLayoutModel(BaseModel):
     page_id: int = 0
     page_name: str = ""
     layout: dict = None
+    prompt: str = ""
     is_active: int  = 1
 
 class PageDataModel(BaseModel):
@@ -69,6 +70,7 @@ class ApprovePageModel(BaseModel):
     project_id: int
     page_name: str
     layout: dict
+    prompt: str
 
 class CreateProjectModel(BaseModel):
     """

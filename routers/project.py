@@ -106,7 +106,8 @@ def get_page_layout(page_id: int):
 
 @router.post("/approve_page/", status_code=status.HTTP_201_CREATED)
 def approve_page(data: ApprovePageModel):
-    success = transact.approve_page(page_name = data.page_name, project_id = data.project_id, layout = data.layout)
+    success = transact.approve_page(page_name = data.page_name, project_id = data.project_id,
+                                    layout = data.layout, prompt = data.prompt)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Page Approval failed")
 

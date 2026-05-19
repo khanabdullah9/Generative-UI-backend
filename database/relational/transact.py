@@ -12,7 +12,7 @@ def start_engine():
     except Exception as err:
         log_error(str(err))
 
-def approve_page(page_name: str, layout: dict, project_id: int) -> bool:
+def approve_page(page_name: str, layout: dict, project_id: int, prompt: str) -> bool:
     """
     Enter the project detail and save the page layout
     Args:
@@ -32,6 +32,7 @@ def approve_page(page_name: str, layout: dict, project_id: int) -> bool:
             new_page_layout = PageLayout()
             new_page_layout.PageName = page_name
             new_page_layout.Layout = layout
+            new_page_layout.Prompt = prompt
             session.add(new_page_layout)
 
             session.flush() # push to db without inserting

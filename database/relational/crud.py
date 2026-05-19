@@ -262,12 +262,13 @@ class PageLayoutCrud(DBEngine):
     def __init__(self):
         super().__init__()
 
-    def create(self, page_name: str, layout: dict):
+    def create(self, page_name: str, layout: dict, prompt: str):
         try:
             with Session(self.engine) as session:
                 new_page_layout = PageLayout()
                 new_page_layout.PageName = page_name
                 new_page_layout.Layout = layout
+                new_page_layout.Prompt = prompt
 
                 session.add(new_page_layout)
                 session.commit()
