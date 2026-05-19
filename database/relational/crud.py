@@ -398,7 +398,7 @@ class UsageCrud(DBEngine):
         with Session(self.engine) as session:
             return session.execute(statement).mappings().all()
 
-    def update(self, user_id:int, is_active: int = 0):
+    def update(self, user_id:int, is_active: int = 1):
         try:
             with Session(self.engine) as session:
                 usage_obj = session.get(Usage, user_id)
