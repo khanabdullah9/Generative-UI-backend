@@ -55,6 +55,8 @@ class UserMasterCrud(DBEngine):
             statement = statement.where(
                 and_(UserMaster.Email == email, UserMaster.Password == password, UserMaster.IsActive == 1)
             )
+        if email and not password:
+            statement = statement.where(UserMaster.Email == email)
 
         try:
             with Session(self.engine) as session:

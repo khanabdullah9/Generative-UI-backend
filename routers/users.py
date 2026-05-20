@@ -26,8 +26,10 @@ def login_user(user: UserModel):
 
 @router.post("/create_user/", status_code=status.HTTP_201_CREATED)
 def create_user(user: UserModel):
-    # obj = UserMasterCrud()
-    # success = obj.create(first_name = user.first_name, last_name = user.last_name, email = user.email, password = user.password)
+    obj = UserMasterCrud()
+    results = obj.read(email = user.email)
+    if len(results) > 0:
+        return {"message":"Email already taken."}
 
     success = transact.create_user(first_name = user.first_name, last_name = user.last_name, email = user.email, password = user.password)
     if not success:
