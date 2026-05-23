@@ -2,7 +2,7 @@ from sqlalchemy import  select, insert, and_
 from sqlalchemy.orm import Session
 
 from database.relational.crud import DBEngine
-from database.relational.tables import ProjectDetails, PageLayout, ProjectMaster, ProjectUsers, PageData, Usage, UserMaster
+from database.relational.tables import ProjectDetails, PageLayout, ProjectMaster, ProjectUsers, PageData, Usage, UserMaster, Prompt
 from utils import log_error
 
 def start_engine():
@@ -12,7 +12,7 @@ def start_engine():
     except Exception as err:
         log_error(str(err))
 
-def approve_page(page_name: str, layout: dict, project_id: int, prompt: str) -> bool:
+def approve_page(page_name: str, layout: dict, project_id: int) -> bool:
     """
     Enter the project detail and save the page layout
     Args:
@@ -32,7 +32,6 @@ def approve_page(page_name: str, layout: dict, project_id: int, prompt: str) -> 
             new_page_layout = PageLayout()
             new_page_layout.PageName = page_name
             new_page_layout.Layout = layout
-            new_page_layout.Prompt = prompt
             session.add(new_page_layout)
 
             session.flush() # push to db without inserting
@@ -143,6 +142,44 @@ def create_user(first_name: str, last_name: str, email: str, password: str):
             new_usage = Usage()
             new_usage.UserID = new_user.UserID
             session.add(new_usage)
+
+            session.commit()
+            return True
+        except Exception as err:
+            log_error(str(err))
+            session.rollback()
+            return False
+
+def pre_infer_processing(user_id: int, prompt: str):
+    """
+    Update the request usage and enter prompt
+    Args:
+        user_id: user id
+        prompt: user prompt
+
+    Returns: bool: Acknowledgement
+
+    """
+    engine = start_engine()
+    if not engine:
+        return False
+
+    with Session(engine) as session:
+        try:
+            usage_lst = session.query(Usage).filter(and_(Usage.UserID == user_id, Usage.IsActive == 1)).all()
+            if not usage_lst:
+                return False
+
+            usage_obj = usage_lst[0]
+            usage_obj.UsageCount += 1
+
+            session.add(usage_obj)
+            session.flush()
+
+            new_prompt = Prompt()
+            new_prompt.Prompt = prompt
+            new_prompt.UserID = user_id
+            session.add(new_prompt)
 
             session.commit()
             return True

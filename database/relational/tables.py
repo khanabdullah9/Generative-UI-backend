@@ -80,3 +80,12 @@ class Usage(BaseClass):
     ModifiedDate: Mapped[datetime] = mapped_column(insert_default=datetime.utcnow(), onupdate=datetime.utcnow())
     IsActive: Mapped[int] = mapped_column(default=1)
 
+class Prompt(BaseClass):
+    __tablename__ = "Prompt"
+
+    PromptID: Mapped[int] = mapped_column(primary_key=True, autoincrement = True)
+    Prompt: Mapped[str]
+    UserID: Mapped[int] = mapped_column(ForeignKey("UserMaster.UserID"))
+    CreatedDate: Mapped[datetime] = mapped_column(default=datetime.utcnow())
+    ModifiedDate: Mapped[datetime] = mapped_column(insert_default=datetime.utcnow(), onupdate=datetime.utcnow())
+    IsActive: Mapped[int] = mapped_column(default=1)

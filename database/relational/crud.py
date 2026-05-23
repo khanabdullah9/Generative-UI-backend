@@ -264,13 +264,12 @@ class PageLayoutCrud(DBEngine):
     def __init__(self):
         super().__init__()
 
-    def create(self, page_name: str, layout: dict, prompt: str):
+    def create(self, page_name: str, layout: dict):
         try:
             with Session(self.engine) as session:
                 new_page_layout = PageLayout()
                 new_page_layout.PageName = page_name
                 new_page_layout.Layout = layout
-                new_page_layout.Prompt = prompt
 
                 session.add(new_page_layout)
                 session.commit()
@@ -412,6 +411,53 @@ class UsageCrud(DBEngine):
 
                 if is_active == 0:
                     usage_obj.IsActive = 0
+
+                session.commit()
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def delete(self, user_id: int):
+        return self.update(user_id = user_id, is_active = 0)
+
+class PromptCrud(DBEngine):
+    def __init__(self):
+        super().__init__()
+
+    def create(self, user_id: int, prompt: str):
+        try:
+            with Session(self.engine) as session:
+                new_prompt = Prompt
+                new_prompt.Prompt = prompt
+                new_prompt.UserID = user_id
+
+                session.add(new_prompt)
+                session.commit()
+
+                return True
+        except Exception as err:
+            log_error(str(err))
+            return False
+
+    def read(self, user_id: int):
+        statement = select(Prompt.Prompt).where(
+            and_(Prompt.UserID == user_id, Prompt.IsActive == 1)
+        )
+        with Session(self.engine) as session:
+            return session.execute(statement).mappings().all()
+
+    def update(self, user_id:int, prompt: str = "", is_active: int = 1):
+        try:
+            with Session(self.engine) as session:
+                prompt_obj = session.get(Prompt, user_id)
+                if not prompt_obj:
+                    return False
+
+                prompt_obj.Prompt = prompt
+
+                if is_active == 0:
+                    prompt_obj.IsActive = 0
 
                 session.commit()
                 return True
