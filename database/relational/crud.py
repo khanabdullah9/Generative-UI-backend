@@ -453,10 +453,11 @@ class PromptCrud(DBEngine):
     def update(self, user_id:int, prompt: str = "", is_active: int = 1):
         try:
             with Session(self.engine) as session:
-                prompt_obj = session.get(Prompt, user_id)
-                if not prompt_obj:
+                prompt_lst = session.query(Prompt).filter(and_(Prompt.UserID == user_id, Prompt.IsActive == 1)).all()
+                if not prompt_lst:
                     return False
 
+                prompt_obj = prompt_lst[0]
                 prompt_obj.Prompt = prompt
 
                 if is_active == 0:
