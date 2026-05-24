@@ -403,9 +403,12 @@ class UsageCrud(DBEngine):
     def update(self, user_id:int, is_active: int = 1):
         try:
             with Session(self.engine) as session:
-                usage_obj = session.get(Usage, user_id)
-                if not usage_obj:
+                # usage_obj = session.get(Usage, user_id)
+                usage_lst = session.query(Usage).filter(and_(Usage.UserID == user_id, Usage.IsActive == 1)).all()
+                if not usage_lst:
                     return False
+
+                usage_obj = usage_lst[0]
 
                 usage_obj.UsageCount += 1
 
