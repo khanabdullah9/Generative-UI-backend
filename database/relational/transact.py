@@ -48,10 +48,10 @@ def approve_page(page_name: str, layout: dict, project_id: int) -> bool:
             session.rollback()
             return False
 
-def create_project_with_manager(user_id: int, proj_name: str, proj_desc: str) -> bool:
+def create_project_with_manager(user_id: int, proj_name: str, proj_desc: str) -> tuple[bool, int]:
     engine = start_engine()
     if not engine:
-        return False
+        return False, -1
 
     with Session(engine) as session:
         try:
@@ -69,11 +69,11 @@ def create_project_with_manager(user_id: int, proj_name: str, proj_desc: str) ->
             session.add(new_proj_user)
 
             session.commit()
-            return True
+            return True, new_proj.ProjectID
         except Exception as err:
             log_error(str(err))
             session.rollback()
-            return False
+            return False, -1
 
 def save_page_data(page_id: int, form_data: dict) -> bool:
     """

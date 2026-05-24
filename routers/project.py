@@ -38,11 +38,11 @@ def create_project_only(model: CreateProjectModel):
     Returns: JSON
 
     """
-    success = transact.create_project_with_manager(user_id = model.user_id, proj_name = model.proj_name, proj_desc = model.proj_desc)
+    success, project_id = transact.create_project_with_manager(user_id = model.user_id, proj_name = model.proj_name, proj_desc = model.proj_desc)
     if not success:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Project creation failed")
 
-    return {"message": "Project creation successful", "status_code":201}
+    return {"message": "Project creation successful", "project_id":project_id}
 
 @router.post("/create_project_only/", status_code=status.HTTP_201_CREATED)
 def create_project_only(project: ProjectMasterModel):
