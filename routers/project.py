@@ -29,7 +29,7 @@ def create_project(project: ProjectMasterModel):
     return {"message": "Project creation successful","project_id": inserted_id}
 
 @router.post("/create_project_with_manager/", status_code=status.HTTP_201_CREATED)
-def create_project_only(model: CreateProjectModel):
+def create_project_with_manager(model: CreateProjectModel):
     """
     Creates ProjectMaster entry and enters the user/manager (creator) in the ProjectUser
     Args:
